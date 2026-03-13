@@ -8,7 +8,7 @@ import io
 # --- 網頁標題與設定 ---
 st.set_page_config(page_title="林道分析", page_icon="🏍️")
 st.title("林道軌跡 🏍️")
-st.write("把你的 GPX 檔案傳上來，一秒產出 IG 限動專屬紀錄卡！")
+st.write("把你的 GPX 檔案傳上來，一秒產出紀錄卡！")
 
 # --- 1. 檔案上傳區 ---
 uploaded_file = st.file_uploader("點擊這裡上傳 GPX 檔案", type=["gpx"])
@@ -114,4 +114,5 @@ if uploaded_file is not None:
         )
 
     else:
+
         st.error("這份檔案裡面找不到軌跡資料喔！")
