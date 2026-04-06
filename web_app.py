@@ -7,9 +7,11 @@ import io
 import urllib.request
 import os
 
-# --- 網頁標題與設定 ---
-st.set_page_config(page_title="阿福林道分析器", page_icon="🏍️")
-st.title("阿福林道軌跡分析器 🏍️")
+# ==========================================
+# 🛑 版本驗證：標題加上了 V2.0！
+# ==========================================
+st.set_page_config(page_title="阿福林道分析器 V2.0", page_icon="🏍️")
+st.title("阿福林道軌跡分析器 V2.0 🚀")
 st.write("把你的 GPX 檔案傳上來，一秒產出 IG 限動專屬紀錄卡！")
 
 # --- 1. 檔案上傳區 ---
@@ -37,9 +39,7 @@ if uploaded_file is not None:
         minutes, _ = divmod(remainder, 60)
         duration_str = f"{hours}h {minutes}m"
 
-        # ==========================================
-        # --- 網頁顯示區塊 1：超大地圖 ---
-        # ==========================================
+        # --- 軌跡地圖 ---
         st.subheader("🗺️ 軌跡地圖")
         my_map = folium.Map(location=[points[0][0], points[0][1]], zoom_start=13)
         folium.PolyLine(points, color="red", weight=5).add_to(my_map)
@@ -47,9 +47,7 @@ if uploaded_file is not None:
 
         st.divider()
 
-        # ==========================================
         # --- 產出 IG 限動去背圖 (PNG) ---
-        # ==========================================
         SCALE_FACTOR = 2
         base_w, base_h = 1080, 1920
         high_res_w = base_w * SCALE_FACTOR
@@ -58,19 +56,17 @@ if uploaded_file is not None:
         high_res_img = Image.new("RGBA", (high_res_w, high_res_h), (0, 0, 0, 0))
         draw = ImageDraw.Draw(high_res_img)
 
-        # ==========================================
-        # --- 【字體神救援】自動下載 Google 高畫質字體 ---
-        # ==========================================
+        # --- 自動下載 Google 高畫質字體 ---
         font_path = "Roboto-Bold.ttf"
-        # 如果發現沒有字體，就自動下載！
         if not os.path.exists(font_path):
+            st.info("🔄 雲端主機正在下載高清字體裝備，請稍等...") # 顯示下載提示
             font_url = "https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Bold.ttf"
             urllib.request.urlretrieve(font_url, font_path)
 
         title_size = 45 * SCALE_FACTOR
         value_size = 110 * SCALE_FACTOR
         
-        # 霸氣直接使用載下來的高畫質字體！
+        # 這裡沒有 try-except 護城河了！如果失敗會直接報錯，不會給螞蟻字！
         font_title = ImageFont.truetype(font_path, title_size)
         font_value = ImageFont.truetype(font_path, value_size)
 
@@ -112,12 +108,9 @@ if uploaded_file is not None:
         strava_orange = (252, 76, 2, 255)
         draw.line(pixel_points, fill=strava_orange, width=12 * SCALE_FACTOR, joint="round")
 
-        # --- 高品質縮小 (抗鋸齒魔法) ---
         img_final = high_res_img.resize((base_w, base_h), Image.Resampling.LANCZOS)
 
-        # ==========================================
-        # --- 網頁顯示區塊 2：限動紀錄卡 ---
-        # ==========================================
+        # --- 限動紀錄卡 ---
         st.subheader("📸 限動紀錄卡")
         st.image(img_final, use_container_width=True)
         
